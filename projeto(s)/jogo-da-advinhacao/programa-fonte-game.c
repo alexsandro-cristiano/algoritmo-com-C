@@ -2,104 +2,111 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <time.h>
+#include <locale.h>
 
-void saudar();
-void borda();
-void limparTela();
-void instrucao(int x);
-void cabecalho(int chance);
-void ganhador(int fim);
+void aprensentar_tela_inicial();
+void exibir_borda();
+void limpar_console();
+void exibir_instrucao(int x);
+void exibir_cabecalho(int chance);
+void exibir_vencedor(int fim);
 int gerarNumeroAleatorio();
 int processarJogo (int numJ,int numA);
 
 
-int main (){
-	int numAleatorio = gerarNumeroAleatorio(),numJogado,fimDeJogo,rodada;
-	char nivel;
+int main () {
+	setlocale(LC_ALL, "Portuguese");
+	int numAleatorio = gerarNumeroAleatorio();
+	int numJogado, fimDeJogo, turno;
+	char nivel_dificuldade;
 	
-	saudar();
-	printf("\n\tESCOLHA A DIFICULDADE:\n");
-	printf("\t[F]acil - [M]edio - [D]ificil\n");
-	nivel = toupper(getchar());
+	aprensentar_tela_inicial();
+	nivel_dificuldade = toupper(getchar());
 
-	switch(nivel) {
+	switch(nivel_dificuldade) {
 		case 'F':
-			rodada=10;
-			limparTela();
-			instrucao(rodada);
+			turno=10;
+			limpar_console();
+			exibir_instrucao(turno);
 			do{
-				limparTela();
-				cabecalho(rodada);
-				printf("\n\nInforme seu Numero: ");
+				limpar_console();
+				exibir_cabecalho(turno);
+				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
-				rodada --;
+				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
-			}while((rodada>0)&&(fimDeJogo!=1));
+			}while((turno>0)&&(fimDeJogo!=1));
 		break;
 		case 'M':
-			rodada=5;
-			limparTela();
-			instrucao(rodada);
+			turno=5;
+			limpar_console();
+			exibir_instrucao(turno);
 			do{
-				limparTela();
-				cabecalho(rodada);
-				printf("\n\nInforme seu Numero: ");
+				limpar_console();
+				exibir_cabecalho(turno);
+				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
-				rodada --;
+				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
-			}while((rodada>0)&&(fimDeJogo!=1));
+			}while((turno>0)&&(fimDeJogo!=1));
 			break;
 		case 'D':
-			rodada=3;
-			limparTela();
-			instrucao(rodada);
+			turno=3;
+			limpar_console();
+			exibir_instrucao(turno);
 			do{
-				limparTela();
-				cabecalho(rodada);
-				printf("\n\nInforme seu Numero: ");
+				limpar_console();
+				exibir_cabecalho(turno);
+				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
-				rodada --;
+				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
-			}while((rodada>0)&&(fimDeJogo!=1));
+			}while((turno>0)&&(fimDeJogo!=1));
 			break;
 		default:
-			printf("Erro\n");
+			printf("Informação Invalida\n");
 	}
-	ganhador(fimDeJogo);
+	exibir_vencedor(fimDeJogo);
 	return 0;
 }
-void saudar(){
-	borda();
-	printf("\n *\t\t\tBEM VINDO\t\t*\n");
-	printf(" *\t\tAO JOGO DA ADVINHACAO\t\t*\n");
-	borda();
+
+void limpar_console() {
+	system("cls");
 }
-void borda(){
-	int i=0;
-	while(i<50){
+
+void exibir_borda() {
+	int i;
+	for(i=0; i<50; i++) {
 		printf("*");
-		i++;
 	}
 }
-void instrucao(int x){
-	borda();
+
+void aprensentar_tela_inicial() {
+	exibir_borda();
+	printf("\n\n\n *\t\t\tBEM VINDO\t\t*\n");
+	printf(" *\t\tAO JOGO DA ADVINHAÇÃO\t\t*\n\n\n");
+	exibir_borda();
+	printf("\n\n\tSELECIONE: [F]acil - [M]edio - [D]ificil\n");
+}
+
+void exibir_instrucao(int x) {
+	exibir_borda();
 	printf("\n\t\tINSTRUCOES:\n\n");
-	printf(" Ja sorteamos um numero para voce.\n\n A partir de agora voce tera %d tentativas.\n\n O numeros esta entre 0 - 100 para acertar o numero.\n",x);
-	borda();
+	printf("Ja sorteamos um numero para voce.\n\nA partir de agora voce tera %d tentativas.\n\n O numeros esta entre 0 - 100 para acertar o numero.\n",x);
+	exibir_borda();
 	fflush(stdin);
 	getchar();
 }
-void cabecalho(int chance){
-	borda();
-	printf("\n\tNumero de Chances: %d\n",chance);
-	borda();
+
+void exibir_cabecalho(int chance) {
+	exibir_borda();
+	printf("\n\tNúmero de Chances: %d\n",chance);
+	exibir_borda();
 }
-void limparTela(){
-	system("cls");
-}
-void ganhador(int fim){
-	limparTela();
-	if(fim!=1){
+
+void exibir_vencedor(int fim){
+	limpar_console();
+	if(fim!=1) {
 		printf("\t\t\t    _______________         \n");
 		printf("\t\t\t   /               \\       \n"); 
 		printf("\t\t\t  /                 \\      \n");
@@ -116,10 +123,10 @@ void ganhador(int fim){
 		printf("\t\t\t   \\_             _/       \n");
 		printf("\t\t\t     \\_         _/         \n");
 		printf("\t\t\t       \\_______/           \n");
-		printf("\n\n\t\t\tInfelizmente nao foi dessa vez!\n\t\t\tTente Novamente...");
+		printf("\n\n\t\t\tInfelizmente não foi dessa vez!\n\t\t\tTente Novamente...");
 	}
 	else{
-		printf("\t\t\tVoce é o GRANDE CAMPEAO, meus parabens!!!\n\n\n");
+		printf("\n\n\t\t\tVoce é o GRANDE CAMPEAO, meus parabéns!!!\n\n\n");
 		printf("\t\t\t       ___________      \n");
 		printf("\t\t\t      '._==_==_=_.'     \n");
 		printf("\t\t\t      .-\\:      /-.    \n");
@@ -132,6 +139,7 @@ void ganhador(int fim){
 		printf("\t\t\t        '-------'       \n\n");
 	}
 }
+
 int processarJogo (int numJ,int numA){
 	if(numJ==numA){
 		return 1;
@@ -150,6 +158,7 @@ int processarJogo (int numJ,int numA){
 	}
 	return 0;
 }
+
 int gerarNumeroAleatorio (){
 	srand(time(NULL));
 	return rand()%100;
