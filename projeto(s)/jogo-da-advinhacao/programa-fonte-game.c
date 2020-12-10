@@ -92,7 +92,8 @@ void aprensentar_tela_inicial() {
 void exibir_instrucao(int x) {
 	exibir_borda();
 	printf("\n\t\tINSTRUCOES:\n\n");
-	printf("Ja sorteamos um numero para voce.\n\nA partir de agora voce tera %d tentativas.\n\n O numeros esta entre 0 - 100 para acertar o numero.\n",x);
+	printf(" - Voce tem %d tentativas para ganhar o jogo"
+			"\n\n - Escolha um número entre [0-100]\n",x);
 	exibir_borda();
 	fflush(stdin);
 	getchar();
@@ -161,5 +162,5 @@ int processarJogo (int numJ,int numA){
 
 int gerarNumeroAleatorio (){
 	srand(time(NULL));
-	return rand()%100;
+	return rand()%101;
 }
