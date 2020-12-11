@@ -16,7 +16,8 @@ int processarJogo (int numJ,int numA);
 void criar_nome_arquivo(char nome_arq[]);
 void criar_arquivo(char nome_arq[], FILE *fp);
 void escrever_arquivo(int numA,char nivel, char nome_arq[], FILE *fp);
-
+void inserir_chute(int num,char nome_arq[], FILE *fp);
+void finalizar_arquivo(int num,char nome_arq[], FILE *fp);
 
 int main () {
 	setlocale(LC_ALL, "Portuguese");
@@ -47,6 +48,7 @@ int main () {
 				exibir_cabecalho(turno);
 				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
+				inserir_chute(numJogado,nome_arq,fp);
 				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
 			}while((turno>0)&&(fimDeJogo!=1));
@@ -59,6 +61,7 @@ int main () {
 				exibir_cabecalho(turno);
 				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
+				inserir_chute(numJogado,nome_arq,fp);
 				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
 			}while((turno>0)&&(fimDeJogo!=1));
@@ -71,6 +74,7 @@ int main () {
 				exibir_cabecalho(turno);
 				printf("\n\nInforme seu Número: ");
 				scanf("%d",&numJogado);
+				inserir_chute(numJogado,nome_arq,fp);
 				turno --;
 				fimDeJogo = processarJogo(numJogado,numAleatorio);
 			}while((turno>0)&&(fimDeJogo!=1));
@@ -79,6 +83,7 @@ int main () {
 			printf("Informação Invalida\n");
 	}
 	exibir_vencedor(fimDeJogo);
+	finalizar_arquivo(fimDeJogo,nome_arq,fp);
 	return 0;
 }
 
@@ -203,12 +208,36 @@ void criar_arquivo(char nome_arq[], FILE *fp) {
 	time_t segundos;
 	time(&segundos);
 	data_atual = localtime(&segundos);
-	fprintf(fp,"Programa Iniciado: %d:%d:%.2d\n",data_atual->tm_hour,data_atual->tm_min,data_atual->tm_sec);
+	fprintf(fp,"Programa Iniciado..........%.2d:%.2d:%.2d\n",data_atual->tm_hour,data_atual->tm_min,data_atual->tm_sec);
+	fclose(fp);
 }
 
 void escrever_arquivo(int numA,char nivel, char nome_arq[], FILE *fp){
 	fp = fopen(nome_arq,"a");
-	fprintf(fp,"Número Aleatorio.....%d\n",numA);
-	fprintf(fp,"Nivel de Dificuldade.....%c\n",nivel);
+	fprintf(fp,"Número Aleatorio..........%d\n",numA);
+	fprintf(fp,"Nivel de Dificuldade..........%c\n",nivel);
+	fprintf(fp,"Números Tentados: ");
+	fclose(fp);
 }
 
+void inserir_chute(int num,char nome_arq[], FILE *fp) {
+	fp = fopen(nome_arq,"a");
+	fprintf(fp,"%d ",num);
+	fclose(fp);
+}
+
+void finalizar_arquivo(int num,char nome_arq[], FILE *fp){
+	fp = fopen(nome_arq,"a");
+	struct tm *data_atual;
+	time_t segundos;
+	time(&segundos);
+	data_atual = localtime(&segundos);
+	if(num!=1){
+		fprintf(fp,"\nJogador Perdeu\n");
+		fprintf(fp,"Programa Encerrado..........%.2d:%.2d:%.2d\n",data_atual->tm_hour,data_atual->tm_min,data_atual->tm_sec);
+	}
+	else{
+		fprintf(fp,"\nJogador Venceu\n");
+		fprintf(fp,"\nPrograma Encerrado..........%.2d:%.2d:%.2d\n",data_atual->tm_hour,data_atual->tm_min,data_atual->tm_sec);
+	}
+}
