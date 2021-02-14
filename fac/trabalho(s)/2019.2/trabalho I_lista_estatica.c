@@ -26,6 +26,7 @@ int main ()
 //Processamento dos Dados:
 	do
 	{
+		printf("\tApos a correcao, versao final.\n\n");
 		printf("\tVoce iniciou o Programa\n\tSeja Bem-Vindo!");
 		printf("\n\n\tMenu de Opcao:\n[I]nsercao de novo elemento\n[R]emocao de elemento\n[A]ltercao de um elemento");
 		printf("\n[B]uscar elemento\n[E]xibir elemento\n[S]air do programa\n");
@@ -65,7 +66,7 @@ int main ()
 				}
 				else
 				{
-					printf("\n\n\t\t O elemento nao pode ser foi removido\n\t\tPorFavor, verifique o elemento informado :(\n\n");
+					printf("\n\n\t\t O elemento nao pode ser foi removido\n\t\tPor Favor, verifique se o elemento informado esta correto :(\n\n");
 				}
 				system("pause");
 				system("cls");
@@ -88,7 +89,7 @@ int main ()
 				}
 				else
 				{
-					printf("\n\n\t\t Nao conseguimos realizar a Alteracao do elemento.\n\t\tPorFavor, verifique o elemento informado :(\n\t\tPor favor verifique os numeros informados.\n\n");
+					printf("\n\n\t\t Nao conseguimos realizar a Alteracao do elemento.\n\t\tPor Favor, verifique se o elemento informado esta correto :(\n\n");
 				}
 				system("pause");
 				system("cls");
@@ -133,22 +134,31 @@ int main ()
 
 int fun_inseri (int vet[],int tam,int *quant,int numN)
 {
-	int ind=*quant;
+	int i=0,ind=*quant;
 	if(*quant<tam) //verificando se tem espaço na Lista
 	{
-		ind--;
-		while(vet[ind]>numN)//bug de loop infinito.
+		if(*quant!=0)
 		{
-			printf("no loop doidao");
-			vet[ind+1]=vet[ind];
-			if(ind>=0)
+			ind--;
+			while((vet[ind]>numN)&&(i!=*quant))
 			{
-				ind--;
+				vet[ind+1]=vet[ind];
+				if(ind>=0)
+				{
+					ind--;
+				}
+				i++;
 			}
+			vet[ind+1]=numN;
+			(*quant)++;
+			return 1; // retornando que a inserção do numero foi um sucesso*/
 		}
-		vet[ind+1]=numN;
-		(*quant)++;
-		return 1; // retornando que a inserção do numero foi um sucesso
+		else
+		{
+			vet[ind]=numN;
+			(*quant)++;
+			return 1;
+		}
 	}
 	else
 	{
@@ -160,20 +170,28 @@ int fun_remove (int vet[],int *quant,int numR)
 {
 	int i=0,ind,volta=0;
 	
-	while(i<*quant)
+	volta = fun_busca (vet,quant,numR);
+	if(volta == -1)
 	{
-		if(vet[i]==numR)
+		return 0;
+	}
+	else
+	{
+		while(i<*quant)
 		{
-			for(ind=i+1;ind<*quant;ind++)
+			if(vet[i]==numR)
 			{
-				vet[ind-1]=vet[ind];
+				for(ind=i+1;ind<*quant;ind++)
+				{
+					vet[ind-1]=vet[ind];
+				}
+				(*quant)--;
+				volta=1;
 			}
-			(*quant)--;
-			volta=1;
-		}
-		else
-		{
-			i++;
+			else
+			{
+				i++;
+			}
 		}
 	}
 	return volta;
@@ -184,10 +202,10 @@ int fun_altera (int vet[],int tam,int *quant,int numA,int numN)
 	int i,volta, numRepet=*quant;
 	
 	volta = fun_remove (vet,quant,numA);//removendo da lista o numero solicitado para alteração
-	numRepet-=*quant;//verificando se existe repetição de elementos removidos
 	
 	if(volta==1)//verificando se o numero existe na lista e se foi removido
 	{
+		numRepet-=*quant;//verificando se existe repetição de elementos removidos
 		//inserindo a quantidade de numeros que foi pedido para alterar
 		for(i=0;i<numRepet;i++)
 		{
@@ -206,9 +224,16 @@ int fun_busca (int vet[],int quant,int numP)
 	int i; //declarando a variavel que serve de indice para o vetor
 	for(i=0;i<quant;i++) //Varrendo a lista
 	{
-		if(vet[i]==numP) //Verificando se existe o numero pedido na lista
+		if(vet[i]>numP)
 		{
-			return i; //retornando a primeira ocorrencia do numero pedido
+			return -1;
+		}
+		else
+		{
+			if(vet[i]==numP) //Verificando se existe o numero pedido na lista
+			{
+				return i; //retornando a primeira ocorrencia do numero pedido
+			}
 		}
 	}
 	return -1;//retornando que nao foi encontrado o numero pedido
