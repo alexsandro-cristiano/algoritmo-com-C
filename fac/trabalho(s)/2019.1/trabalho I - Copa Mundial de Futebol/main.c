@@ -11,16 +11,13 @@ Representando a quantidade de ponto que o time recebe se:
 
 int main() {
 	srand(time(NULL));
-	const int SELECOES = 4;
-	int fase_Grupo[32] = {0};
-	int fase_oitavas[16];
-	
-	const int GRUPO = 2;
-	int time1, time2, aux = 1, limite = 0;
+	const int SELECOES = 4, GRUPO = 8;
+	int fase_Grupo[32] = {0}, fase_oitavas[16];
+	int time1, time2, aux = 1, limite = 0, pass;
+
 	while(aux <= GRUPO){
 		int gol_feitos[4] = {0}, gol_tomados[4] = {0};
-		int placar_time1=0, placar_time2=0;
-
+		int placar_time1 = 0, placar_time2 = 0;
 		limite += SELECOES;
 		printf("\tGrupo %d\n\n", aux);
 		//realizar as partidas time 1 vs time2
@@ -32,26 +29,26 @@ int main() {
 				scanf("%d",&placar_time1);
 				printf("ENTRE COM OS GOLS DO TIME %d: ",time2+1);
 				scanf("%d",&placar_time2);*/
-				placar_time2 = rand() % 5;
-				placar_time1 = rand() % 5;
-				//verificar empate
-				if(placar_time1 == placar_time2){
+				placar_time1 = rand() % 3;
+				placar_time2 = rand() % 3;
+				//Validando a partida
+				if(placar_time1 == placar_time2) {
 					fase_Grupo[time1] += EMPATE;
-					fase_Grupo[time2] += EMPATE;
-										
-				} else if(placar_time1 > placar_time2){
+					fase_Grupo[time2] += EMPATE;							
+				}
+				else if(placar_time1 > placar_time2){
 					fase_Grupo[time1] += VITORIA;					
-				} else {
+				}
+				else {
 					fase_Grupo[time2] += VITORIA;
 				}
 
-				//Convertendo os Gols do jogo Time 1
+				//Convertendo os Gols do jogo Time 1 e Time 2
 				gol_feitos[time1] += placar_time1;
 				gol_tomados[time1] += placar_time2;
-				//Convertendo os Gols do jogo Time 2
 				gol_feitos[time2] += placar_time2;
 				gol_tomados[time2] += placar_time1;
-				
+	
 				placar_time1=0, placar_time2=0;
 				printf("\n\n");
 			}
@@ -64,33 +61,100 @@ int main() {
 			}
 			printf("\n\n");
 		}
-		
-		//Classificado dos Grupo
-		/*
-			varrer o vetor e ver quem tem mais pontos
-			se tiver empate de pontos entrar para desempatar
-		*/
-			printf("\n\n");
-		int ind, maior=-999,classif1,classif2;
-		for(ind=(limite-SELECOES); ind<limite; ind++) {
-			if(fase_Grupo[ind]==fase_Grupo[ind+1]){
-				printf("%d = %d",fase_Grupo[ind],fase_Grupo[ind+1]);
+		//Verificar e Tratar o Empate
+		int primeiro_classificado,segundo_classificado, maior= -999;
+		char houve_empate = 'n';
+
+		for(time1=(limite-SELECOES); time1<(limite-1); time1++) {
+			for(time2=time1+1; time2<limite; time2++) {
+				if(fase_Grupo[time1] == fase_Grupo[time2]){
+					houve_empate = 's';
+					int saldo_gol_time1 =gol_feitos[time1] - gol_tomados[time1];
+					int saldo_gol_time2 =gol_feitos[time2] - gol_tomados[time2];
+					if(saldo_gol_time1>saldo_gol_time2) {
+						segundo_classificado = time1;
+					}
+					else { 
+						if(saldo_gol_time1<saldo_gol_time2){
+							segundo_classificado = time2;
+						}
+						else {
+							if(gol_feitos[time1] > gol_feitos[time2]){
+								segundo_classificado = time1;
+							}
+							else {
+								if(gol_feitos[time1]<gol_feitos[time2]){
+									segundo_classificado = time2;
+								}
+								else{
+									if(gol_tomados[time1]<gol_tomados[time2]){
+										segundo_classificado = time1;
+									}
+									else{
+										segundo_classificado = time2;
+									}
+								}
+							}
+						}
+					}
+				}
 			}
-			if(fase_Grupo[ind] > maior) {
-				maior = fase_Grupo[ind];
-				classif1 = ind;
+		}
+		
+		if(houve_empate == 'n') {
+			//orderna vetor
+			int i,j, aux[4];
+			for(j=0; j<limite; j++){
+				aux[j] = fase_Grupo[j];
+			}
+			for(i=0; i<limite; i++){
+				int aux2;
+				for(j=0; j<limite; j++){
+					if(aux[i]<aux[j]){
+						aux2 = aux[i];
+						aux[i] = aux[j];
+						aux[j] = aux2;
+					}
+				}
 			}
 			
-		}
-		printf("Mais pontos, time %d, quantidade de pontos %d\n",classif1,maior);
+			for(i=0;i<limite;i++){
+				if(aux[0]==fase_Grupo[i]){
+					primeiro_classificado = i;
+				}
+				if(aux[1]==fase_Grupo[i]){
+					segundo_classificado = i;
+				}
+			}
 		
+		}
+		else {
+			int v;
+			for(v=0; v<limite; v++){
+				if(fase_Grupo[v]>maior){
+					maior = fase_Grupo[v];
+					primeiro_classificado = v;
+				}
+			}
+		}
+		printf("\nTIME 1 = %d\nTIME 2= %d\n\n\n",primeiro_classificado,segundo_classificado);
+		
+		//classificados para oitavas
+		
+		fase_oitavas[pass] = primeiro_classificado;
+		pass++;
+		fase_oitavas[pass] = segundo_classificado;
+		pass++;
 		aux++;
 	}
 	
-	/*Exibir Vetor das Oitavas de final
+	
+	printf("\n\n\n\n\n Classificados:\n");
+	int i;
 	for(i=0; i < 16; i++) {
+		printf("Time - %d\n",fase_oitavas[i]);
 		
-	}*/
+	}
 	
 	
 	printf("Pressione [ENTER] para finaliza...\n");
