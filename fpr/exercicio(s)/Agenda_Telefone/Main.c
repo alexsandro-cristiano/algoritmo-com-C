@@ -1,16 +1,9 @@
 /*
 	[Exercicio 24 Fonte:](http://www.facom.ufu.br/~backes/wordpress/ListaC06.pdf)
-Fazer um programa para simular uma agenda de telefones.
-Para cada pessoa devem-se ter os seguintes dados:
-•Nome
-• E-mail
-• Endereco (contendo campos para Rua, numero, complemento, bairro, cep, cidade,estado, pais).
-• Telefone (contendo campo para DDD e numero)
-• Data de aniversario (contendo campo para dia, mes, ano).
-• Observacoes: Uma linha (string) para alguma observacao especial.
 
 (a) Definir a estrutura acima. V
 (b) Declarar a variavel agenda (vetor) com capacidade de agendar ate 100 nomes. v
+
 (c) Definir um bloco de instrucoes busca por primeiro nome:
 	Imprime os dados da pessoa com esse nome(se tiver mais de uma pessoa, imprime para todas).
 (d) Definir um bloco de instrucoes busca por mes de aniversario:
@@ -29,7 +22,11 @@ Para cada pessoa devem-se ter os seguintes dados:
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <locale.h>
+#include <stdbool.h>
+
+#define TAM 100
 
 //Estruturas do Programa
 typedef struct dados{
@@ -58,24 +55,73 @@ typedef struct dt_aniversario{
 }TAniver;
 
 typedef struct agenda{
+	char observacao[30];
 	TDados dados;
 	TEnd end;
 	TTe tel;
 	TAniver niver;
-	char observacao[30];
 }TAgenda;
 //Apartir daqui
 
-
+void exibir_menu();
+bool verificar_arquivo(FILE *fp, char nome_agenda[30]);
+void criar_arquivo(FILE *fp, char nome_agenda[30]);
 int main() {
 	setlocale(LC_ALL, "Portuguese");
-	TAgenda agenda[100];
+	TAgenda agenda[TAM];
+	char nome_da_agenda[30];
+	
+	printf("Informe o Nome da Agenda (xxxx.dat): ");
+	gets(nome_da_agenda);
+	FILE *fp;
+	
+	if(verificar_arquivo(fp,nome_da_agenda)){
+		printf("Arquivo Aberto\n");
+	}
+	else {
+		printf("\n\nAgenda informada não existe.\n\nDeseja  criar agenda \"%s\" (s - n): ",nome_da_agenda);
+		char resp;
+		scanf(" %c",&resp);
+		if(resp == 's' ||resp == 'S') {
+			criar_arquivo(fp,nome_da_agenda);
+		}
+	}
+	//verificando se agenda existe
+	//trabalhar com arquivo
+	/*
+	com a agenda aberta
+	carregar as informações da agenda
+	apresentar menu para manipular agenda
+	
+	do{
+		exibir_menu();
+		
+	}while();*/
 	
 	puts("Pressione [ENTER] para finalizar...");
 	getchar();
 	return 0;
 }
-//l
+
+void exibir_menu(){
+	printf("1 - adicionar contato\n2 - remover contato\n3 - bucar por nome\n4 - buscar por mes de aniversario\n");
+	printf("5 - buscar por dia e mes de aniversario\n6 - imprimir agenda\n");
+}
+
+bool verificar_arquivo(FILE *fp, char nome_agenda[30]){
+	fp = fopen(nome_agenda, "r");
+	if(fp != NULL) {
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+void criar_arquivo(FILE *fp, char nome_agenda[30]){
+	fp = fopen(nome_agenda, "w");
+	if(fp != NULL) {
+		printf("Agenda Criado\n");
+	}
+}
 
 
-//l
