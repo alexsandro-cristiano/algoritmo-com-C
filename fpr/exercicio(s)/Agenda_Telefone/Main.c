@@ -23,7 +23,7 @@
 #include <locale.h>
 #include <stdbool.h>
 
-#define CAP 4
+#define CAP 5
 
 //Estruturas do Programa
 typedef struct dados{
@@ -64,9 +64,10 @@ void exibir_menu();
 bool verificar_arquivo(FILE *fp, char nome_agenda[30]);
 void criar_arquivo(FILE *fp, char nome_agenda[30]);
 void atuarlizar_arquivo();
-bool inserir_contato(TAgenda *agenda, int *espaco_livre);
+bool inserir_contato(TAgenda *agenda, int *quantidade);
 bool validar_espaco_disponivel(int **espaco);
 TAgenda preencher_formulario();
+void imprimir_agenda(TAgenda *agenda, int quantidade);
 
 int main() {
 	setlocale(LC_ALL, "Portuguese");
@@ -90,7 +91,7 @@ int main() {
 		}
 	}*/
 	//Parte da Lista Estatica
-	int espaco_livre = 0, resp = 0;
+	int quantidade = 0, resp = 0;
 	TAgenda agenda[CAP];
 	
 	do {
@@ -99,7 +100,7 @@ int main() {
 		
 		switch(resp) {
 			case 1:
-				if(inserir_contato(agenda, &espaco_livre)){
+				if(inserir_contato(agenda, &quantidade)){
 					//atualizar arquivo da agenda
 					//atuarlizar_agenda();
 					printf("Contato Inserido com SUCESSO\n");
@@ -121,7 +122,9 @@ int main() {
 				printf("Caso %d",resp);
 				break;
 			case 6:
-				printf("Caso %d",resp);
+				system("cls");
+				//printf("IMPRIMINDO A AGENDA: %s\n",nome_da_agenda);
+				imprimir_agenda(agenda, quantidade);
 				break;
 			case 7:
 				printf("Encerrando os Processos...\n");
@@ -158,27 +161,32 @@ void criar_arquivo(FILE *fp, char nome_agenda[30]){
 	}
 }
 
-bool inserir_contato(TAgenda *agenda, int *espaco_livre){
-	int marcador=0,ind = *espaco_livre;
-	if(validar_espaco_disponivel(&espaco_livre)){
+bool inserir_contato(TAgenda *agenda, int *quantidade){
+	int i=0,marcador=0,ind = *quantidade;
+
+	if(validar_espaco_disponivel(&quantidade)){
 		TAgenda novo = preencher_formulario();		
-		if(*espaco_livre!=0){
+		if(*quantidade!=0){
 			//descobrir a posicao de onde colocar registro novo
-			while(strcmp(agenda[marcador].dados.nome, novo.dados.nome) <= 0 && marcador<CAP) {
+			while((strcmp(agenda[i].dados.nome, novo.dados.nome) <= 0) && (i!=*quantidade)) {
 				marcador++;
+				i++;
+				printf("loop 1 while\n");
 			}
+			printf("\n\n\n\n\nValor de i:%d\nValor de marcador:%d\n\n\n\n\n",i,marcador);
 			//deslocar todos os registros para frente na fila
 			while(marcador>ind){
+				printf("loop 2 while\n");
 				agenda[ind+1] = agenda[ind];
 				ind--;
 			}
 			//adicionar cara na fila
 			agenda[marcador] = novo;
-			(*espaco_livre)++;
+			(*quantidade)++;
 			return true;
 		} else {
 			agenda[ind] = novo;
-			(*espaco_livre)++;
+			(*quantidade)++;
 			return true;
 		}		
 	}
@@ -198,7 +206,7 @@ TAgenda preencher_formulario() {
 	printf("Email: ");
 	fflush(stdin);
 	fgets(aux.dados.email, 50,stdin);
-/*
+	
 	printf("\n--------------------\nEndereço:\n");
 	printf("Rua: ");
 	fflush(stdin);
@@ -235,7 +243,18 @@ TAgenda preencher_formulario() {
 	printf("\n--------------------\nObservações:\n");
 	printf("Observação: ");
 	fflush(stdin);
-	fgets(aux.observacao, 30, stdin);*/
+	fgets(aux.observacao, 30, stdin);
 	return aux;
 }
 
+void imprimir_agenda(TAgenda *agenda, int quantidade) {
+	int i;
+	for(i=0; i<quantidade; i++) {
+		printf("Nome:%s\nE-mail:%s\n",agenda[i].dados.nome,agenda[i].dados.email);
+		printf("Data de Aniversario:%d/%d/%d\n",agenda[i].niver.dia,agenda[i].niver.mes,agenda[i].niver.ano);
+		printf("Telefone:(%d) %d\n\n",agenda[i].tel.DDD,agenda[i].tel.numero);
+		printf("Rua: %s\t\tNumero:%d\nComplemento:%s\t\tBairro:%s\t",agenda[i].end.rua,agenda[i].end.numero,agenda[i].end.complemento,agenda[i].end.bairro);
+		printf("CEP:%s\n Cidade:%s\t\tEstado:%s\t\tPais:%s",agenda[i].end.cep,agenda[i].end.cidade,agenda[i].end.estado,agenda[i].end.pais);
+		printf("\n---------------------------------------------\n");
+	}
+}
