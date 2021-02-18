@@ -1,9 +1,6 @@
 /*
 	[Exercicio 24 Fonte:](http://www.facom.ufu.br/~backes/wordpress/ListaC06.pdf)
 
-(a) Definir a estrutura acima. V
-(b) Declarar a variavel agenda (vetor) com capacidade de agendar ate 100 nomes. v
-
 (c) Definir um bloco de instrucoes busca por primeiro nome:
 	Imprime os dados da pessoa com esse nome(se tiver mais de uma pessoa, imprime para todas).
 (d) Definir um bloco de instrucoes busca por mes de aniversario:
@@ -26,7 +23,7 @@
 #include <locale.h>
 #include <stdbool.h>
 
-#define TAM 100
+#define CAP 4
 
 //Estruturas do Programa
 typedef struct dados{
@@ -66,10 +63,15 @@ typedef struct agenda{
 void exibir_menu();
 bool verificar_arquivo(FILE *fp, char nome_agenda[30]);
 void criar_arquivo(FILE *fp, char nome_agenda[30]);
+void atuarlizar_arquivo();
+bool inserir_contato(TAgenda *agenda, int *espaco_livre);
+bool validar_espaco_disponivel(int **espaco);
+TAgenda preencher_formulario();
+
 int main() {
 	setlocale(LC_ALL, "Portuguese");
-	TAgenda agenda[TAM];
-	char nome_da_agenda[30];
+	//Trabalhando com Arquivo
+/*	char nome_da_agenda[30];
 	
 	printf("Informe o Nome da Agenda (xxxx.dat): ");
 	gets(nome_da_agenda);
@@ -77,6 +79,7 @@ int main() {
 	
 	if(verificar_arquivo(fp,nome_da_agenda)){
 		printf("Arquivo Aberto\n");
+		//carregar informações da agenda
 	}
 	else {
 		printf("\n\nAgenda informada não existe.\n\nDeseja  criar agenda \"%s\" (s - n): ",nome_da_agenda);
@@ -85,27 +88,57 @@ int main() {
 		if(resp == 's' ||resp == 'S') {
 			criar_arquivo(fp,nome_da_agenda);
 		}
-	}
-	//verificando se agenda existe
-	//trabalhar com arquivo
-	/*
-	com a agenda aberta
-	carregar as informações da agenda
-	apresentar menu para manipular agenda
+	}*/
+	//Parte da Lista Estatica
+	int espaco_livre = 0, resp = 0;
+	TAgenda agenda[CAP];
 	
-	do{
+	do {
 		exibir_menu();
+		scanf("%d",&resp);
 		
-	}while();*/
+		switch(resp) {
+			case 1:
+				if(inserir_contato(agenda, &espaco_livre)){
+					//atualizar arquivo da agenda
+					//atuarlizar_agenda();
+					printf("Contato Inserido com SUCESSO\n");
+				}
+				else {
+					printf("Não há mais espaço na lista\n");
+				}
+				break;
+			case 2:
+				printf("Caso %d",resp);
+				break;
+			case 3:
+				printf("Caso %d",resp);
+				break;
+			case 4:
+				printf("Caso %d",resp);
+				break;
+			case 5:
+				printf("Caso %d",resp);
+				break;
+			case 6:
+				printf("Caso %d",resp);
+				break;
+			case 7:
+				printf("Encerrando os Processos...\n");
+				break;
+			default:
+				printf("Opção Invalida\nTente Novamente!\n");
+		}
+
+	}while(resp!=7);
 	
-	puts("Pressione [ENTER] para finalizar...");
-	getchar();
+	system("pause");
 	return 0;
 }
 
 void exibir_menu(){
-	printf("1 - adicionar contato\n2 - remover contato\n3 - bucar por nome\n4 - buscar por mes de aniversario\n");
-	printf("5 - buscar por dia e mes de aniversario\n6 - imprimir agenda\n");
+	printf("Menu\n1 - adicionar contato;\n2 - remover contato;\n3 - bucar por nome;\n4 - buscar por mes de aniversario;\n");
+	printf("5 - buscar por dia e mes de aniversario;\n6 - imprimir agenda;\n7 - Sair\n");
 }
 
 bool verificar_arquivo(FILE *fp, char nome_agenda[30]){
@@ -117,11 +150,92 @@ bool verificar_arquivo(FILE *fp, char nome_agenda[30]){
 		return false;
 	}
 }
+
 void criar_arquivo(FILE *fp, char nome_agenda[30]){
 	fp = fopen(nome_agenda, "w");
 	if(fp != NULL) {
-		printf("Agenda Criado\n");
+		printf("\nAgenda Criado\n");
 	}
 }
 
+bool inserir_contato(TAgenda *agenda, int *espaco_livre){
+	int marcador=0,ind = *espaco_livre;
+	if(validar_espaco_disponivel(&espaco_livre)){
+		TAgenda novo = preencher_formulario();		
+		if(*espaco_livre!=0){
+			//descobrir a posicao de onde colocar registro novo
+			while(strcmp(agenda[marcador].dados.nome, novo.dados.nome) <= 0 && marcador<CAP) {
+				marcador++;
+			}
+			//deslocar todos os registros para frente na fila
+			while(marcador>ind){
+				agenda[ind+1] = agenda[ind];
+				ind--;
+			}
+			//adicionar cara na fila
+			agenda[marcador] = novo;
+			(*espaco_livre)++;
+			return true;
+		} else {
+			agenda[ind] = novo;
+			(*espaco_livre)++;
+			return true;
+		}		
+	}
+	return false;
+}
+
+bool validar_espaco_disponivel(int **espaco) {
+	return ((**espaco)<=CAP) ? true: false;
+}
+
+TAgenda preencher_formulario() {
+	TAgenda aux;		
+	printf("\n--------------------\nDados:\n");
+	printf("Nome: ");
+	fflush(stdin);
+	fgets(aux.dados.nome, 50,stdin);
+	printf("Email: ");
+	fflush(stdin);
+	fgets(aux.dados.email, 50,stdin);
+/*
+	printf("\n--------------------\nEndereço:\n");
+	printf("Rua: ");
+	fflush(stdin);
+	fgets(aux.end.rua, 30,stdin);
+	printf("Numero: ");
+	scanf("%d", &aux.end.numero);
+	printf("Complemento *Caso não haja complemento utilizar \"N/A\"*: ");
+	fflush(stdin);
+	fgets(aux.end.complemento, 30,stdin);
+	printf("Bairro: ");
+	fflush(stdin);
+	fgets(aux.end.bairro, 30,stdin);
+	printf("CEP: ");
+	fflush(stdin);
+	fgets(aux.end.cep, 10,stdin);		
+	printf("Cidade: ");
+	fflush(stdin);
+	fgets(aux.end.cidade, 30,stdin);
+	printf("Estado: ");
+	fflush(stdin);
+	fgets(aux.end.estado, 30,stdin);
+	printf("País: ");
+	fflush(stdin);
+	fgets(aux.end.pais, 30,stdin);
+	
+	printf("\n--------------------\nTelefone:\n");
+	printf("Informe o DD + Numero (Exemplo:(21) 99999999): ");
+	scanf("%d %d",&aux.tel.DDD, &aux.tel.numero);
+	
+	printf("\n--------------------\nData de Aniversário:\n");
+	printf("Data de Aniversário (dd/mm/yyyy): ");
+	scanf("%d/%d/%d",&aux.niver.dia, &aux.niver.mes, &aux.niver.ano);
+	
+	printf("\n--------------------\nObservações:\n");
+	printf("Observação: ");
+	fflush(stdin);
+	fgets(aux.observacao, 30, stdin);*/
+	return aux;
+}
 
