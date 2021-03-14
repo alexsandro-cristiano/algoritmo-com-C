@@ -1,22 +1,18 @@
 /*
-	Pilha
-	programa em C
-	main chama a funcao p/ inserir e uma para tirar
-	menu
-	testar overlow - inserir
-	underflow - 
-	
-	inserir
-	retirar - exibe
+	IDENTIFICAÇÃO DE ERRO NA VARIAVEL TOPO:
+		O topo, variavel que delimita o topo da pilha, esta iniciando em 0.
+		com esta inicialização a pilha que no exemplo tem 5 espaços, fica sempre com um espaço a menos.
+		
+			  i		  f
+		vet - 0 1 2 3 4
+			  t
+		
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-
 #define MAX 5
-
 
 void menu();
 int inserir(int vet[],int *topo, int num);
@@ -28,7 +24,7 @@ int main(){
 	int vet[MAX];
 	int num, topo=0;	
 	char sair = 'n';
-	
+
 	do{
 		menu();
 		scanf("%d",&escolha);
@@ -74,15 +70,6 @@ int gerar_numero_aleatorio(){
 }
 
 int inserir(int vet[],int *topo, int num){	
-	/*
-		recebo o vetor e o numero para colocar nele
-		verifico se o vetor esta cheio, se estiver da overflow (retorno -1)
-		se nao coloco na ultima posicao
-		
-		inicio   fim
-		0 1 2 3 4
-		topo aponta para posiçao livre
-	*/
 	if(*topo < MAX){
 		vet[*topo] = num;
 		(*topo)++;
