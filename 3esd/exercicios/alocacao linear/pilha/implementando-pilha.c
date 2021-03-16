@@ -1,13 +1,3 @@
-/*
-	IDENTIFICAÇÃO DE ERRO NA VARIAVEL TOPO:
-		O topo, variavel que delimita o topo da pilha, esta iniciando em 0.
-		com esta inicialização a pilha que no exemplo tem 5 espaços, fica sempre com um espaço a menos.
-		
-			  i		  f
-		vet - 0 1 2 3 4
-			  t
-		
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -18,6 +8,7 @@ void menu();
 int inserir(int vet[],int *topo, int num);
 int remover(int vet[], int *topo ,int num);
 int gerar_numero_aleatorio();
+void exibir(int vet[], int topo);
 
 int main(){
 	int escolha;
@@ -50,8 +41,9 @@ int main(){
 			default:
 				printf("Opcao invalida\n");
 		}
-		
-		printf("Sair: ");
+		exibir(vet,topo);
+		printf("\ntopo = %d",topo);
+		printf("\n\nSair: ");
 		scanf(" %c",&sair);
 		system("cls");
 	}while(sair != 's');
@@ -93,3 +85,8 @@ int remover(int vet[], int *topo ,int num){
 	}	
 }
 
+void exibir(int vet[], int topo){
+	int i;
+	for(i=0;i<topo;i++)
+		printf("%d ",vet[i]);
+}
