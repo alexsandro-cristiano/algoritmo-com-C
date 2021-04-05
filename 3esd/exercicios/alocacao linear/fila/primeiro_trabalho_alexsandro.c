@@ -19,7 +19,7 @@ typedef struct no{
 	char situacao[3];
 }TNo;
 
-TNo escrever();
+TNo lerDados();
 int inserir(TNo fila[],int *fim);
 int remover(int *ini, int *fim);
 
@@ -57,7 +57,7 @@ int main(){
 	return 0;
 }
 
-TNo escrever(){
+TNo lerDados(){
 	TNo aux;
 	printf("Matricula: ");
 	scanf("%d",&aux.matricula);
@@ -72,7 +72,7 @@ TNo escrever(){
 
 int inserir(TNo fila[],int *fim) {
 	if(*fim < MAX){
-		TNo aux = escrever();
+		TNo aux = lerDados();
 		fila[*fim] = aux;
 		(*fim)++;
 		return 1;
