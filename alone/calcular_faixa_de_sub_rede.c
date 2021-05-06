@@ -1,5 +1,8 @@
 #include <stdio.h>
-
+/*
+Fazer apresentar os endereços
+pedir 
+*/
 int main () {
 	
 	int qtda_subRede=32;
